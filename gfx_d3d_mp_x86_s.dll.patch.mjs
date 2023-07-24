@@ -90,6 +90,27 @@ function patchInPlace(arr) {
   // ...
   arr[0x1fd7c] = 0x90; // was 0x74
   arr[0x1fd7d] = 0x90; // was 0x15  
+  // skip could which would print "MAX_SCENE_SURFS_SIZE exceeded - not dra"...
+  // if before that:
+  // arr[0x1FAB3 + 0] = 0x90;
+  // arr[0x1FAB3 + 1] = 0x90;
+  // this will ALWAYS run the code
+  //arr[0x1FACE + 0] = 0x90;
+  //arr[0x1FACE + 1] = 0x90;
+  // this nukes it
+  for (let i = 0x1FACE; i < 0x1FAE5; i++) {
+    arr[i] = 0x90;
+  }
+
+  // in function 0x1001FC70, another case of "MAX_SCENE_SURFS_SIZE exceeded - not dra"
+  //arr[0x1FE24 + 0] = 0x90; // was 0x76
+  //arr[0x1FE24 + 1] = 0x90; // was 0x45  
+  // this crashes since we remove all MAX_SCENE_SURFS_SIZE limit conditions... seems to be a hard-limit which starts overwriting memory or something
+  if (false) {
+    for (let i = 0x1FE3F; i < 0x1FE56; i++) {
+      arr[i] = 0x90;
+    }
+  }
 }
 function patch() {
   patchInPlace(original);
